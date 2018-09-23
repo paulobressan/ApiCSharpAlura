@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Alura.WebAPI.WebApp.Formatters;
 
 namespace Alura.ListaLeitura.WebApp
 {
@@ -22,11 +23,11 @@ namespace Alura.ListaLeitura.WebApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<LeituraContext>(options => {
-                options.UseSqlServer(Configuration.GetConnectionString("ListaLeitura"));
+                options.UseMySql(Configuration.GetConnectionString("ListaLeitura"));
             });
 
             services.AddDbContext<AuthDbContext>(options => {
-                options.UseSqlServer(Configuration.GetConnectionString("AuthDB"));
+                options.UseMySql(Configuration.GetConnectionString("AuthDB"));
             });
 
             services.AddIdentity<Usuario, IdentityRole>(options =>
@@ -43,7 +44,14 @@ namespace Alura.ListaLeitura.WebApp
 
             services.AddTransient<IRepository<Livro>, RepositorioBaseEF<Livro>>();
 
-            services.AddMvc();
+            //Como default o serializador é json, porem vamos adicionar tambem o xml
+            //Criamos alguns formatos exclusivos de retorno da da API e para incluilos na aplicação
+            //temos que adicionar algumas opções no MVC
+            services.AddMvc(options =>
+            {
+                //Importando o novo formato
+                options.OutputFormatters.Add(new LivroCsvFormatter());
+            }).AddXmlSerializerFormatters();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

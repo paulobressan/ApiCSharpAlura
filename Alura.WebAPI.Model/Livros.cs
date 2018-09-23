@@ -25,6 +25,7 @@ namespace Alura.ListaLeitura.Modelos
         public string Resumo { get; set; }
         public string Capa { get; set; }
         public string Lista { get; set; }
+        public string ListaLink { get; set; }
     }
 
     public class LivroUpload

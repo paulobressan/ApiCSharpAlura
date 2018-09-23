@@ -4,15 +4,18 @@ using System.Linq;
 using System.Threading.Tasks;
 using Alura.ListaLeitura.Modelos;
 using Alura.ListaLeitura.Persistencia;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Alura.WebAPI.WebApp.Api
 {
+    //Para tornar a aplicação segura vamos utilizar o anotação Authorize
+    [Authorize]
     //Para identificar que essa classe é uma classe de API, vamos usar o ApiController
     //Ele auxilia a identificação da classe como uma API
     [ApiController]
     //O atributo Route é obrigatório quando identificamos que a classe é uma API
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     //ControllerBase é especifico para Web Api
     //Nele não contem recursos para a renderização de Views(Apresentação)
     public class LivrosController : ControllerBase
@@ -28,7 +31,7 @@ namespace Alura.WebAPI.WebApp.Api
         [HttpGet]
         public IActionResult Get()
         {
-            var listaLivros = _repository.All.Select(l => l.ToModel()).ToList();
+            var listaLivros = _repository.All.Select(l => l.ToApi()).ToList();
             return Ok(listaLivros);
         }
 
@@ -41,7 +44,22 @@ namespace Alura.WebAPI.WebApp.Api
             if (livro == null)
                 return NotFound();
             //toModel Metodo criado para converter o model para um "modelView"
-            return Ok(livro.ToModel());
+            return Ok(livro.ToApi());
+        }
+
+        //Pegar capa do livro
+        [HttpGet("{id}/capa")]
+        public IActionResult GetCapa(int id)
+        {
+            byte[] img = _repository.All
+               .Where(l => l.Id == id)
+               .Select(l => l.ImagemCapa)
+               .FirstOrDefault();
+            if (img != null)
+            {
+                return File(img, "image/png");
+            }
+            return File("~/images/capas/capa-vazia.png", "image/png");
         }
 
         //Incluir livro
