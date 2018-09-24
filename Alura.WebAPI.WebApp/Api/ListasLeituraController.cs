@@ -52,18 +52,18 @@ namespace Alura.WebAPI.WebApp.Api
         [HttpGet("{tipo}")]
         public IActionResult Get (TipoListaLeitura tipo)
         {
-            //Validando token
-            //O token vem no header, no cabeçalho da requisição e vem no chave Authorization
-            var header = HttpContext.Request.Headers;
-            var chave = (header["Authorization"]);
-            var existeAuthorization = header.ContainsKey("Authorization");
-            //Validando se tem a chave Authorization e validando se foi passado a chave secreta
-            if (!existeAuthorization || !(chave == "123"))
-            {
-                //Se não tiver a chave de acesso, retornaremos o 401
-                return Unauthorized();
+            ////Validando token
+            ////O token vem no header, no cabeçalho da requisição e vem no chave Authorization
+            //var header = HttpContext.Request.Headers;
+            //var chave = (header["Authorization"]);
+            //var existeAuthorization = header.ContainsKey("Authorization");
+            ////Validando se tem a chave Authorization e validando se foi passado a chave secreta
+            //if (!existeAuthorization || !(chave == "123"))
+            //{
+            //    //Se não tiver a chave de acesso, retornaremos o 401
+            //    return Unauthorized();
                 
-            }
+            //}
             var lista = CriaLista(tipo);
             return Ok(lista);
         }
